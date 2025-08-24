@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 :root {
   --background: #ffffff;
@@ -21,4 +22,8 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: 'Figtree', Arial, Helvetica, sans-serif;
+}
+
+.font-inter {
+  font-family: 'Inter', sans-serif;
 }
