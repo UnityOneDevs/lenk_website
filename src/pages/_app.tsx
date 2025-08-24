@@ -2,6 +2,7 @@ import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { Figtree } from 'next/font/google'
 import Navbar from '../components/navbar'
+import LenkFooter from '../components/Footer'
 
 const figtree = Figtree({
   subsets: ['latin'],
@@ -15,6 +16,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <main className={figtree.className}>
       <Navbar />
       <Component {...pageProps} />
+      <LenkFooter />
     </main>
   )
 }

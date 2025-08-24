@@ -1,6 +1,5 @@
 'use client'
 import Image from 'next/image'
-import Link from 'next/link'
 import React, { useState } from 'react'
 
 const Navbar = () => {
@@ -8,6 +7,17 @@ const Navbar = () => {
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
+  }
+
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId)
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      })
+    }
+    setIsMenuOpen(false)
   }
 
   return (
@@ -29,28 +39,33 @@ const Navbar = () => {
 
               {/* Desktop Navigation */}
               <div className='hidden lg:flex items-center gap-8 xl:gap-10 text-base xl:text-lg font-afacad'>
-                {['Home', 'Services', 'Industries', 'About us', 'Blog'].map(
-                  (text) => (
-                    <Link
-                      key={text}
-                      href={`/${text.toLowerCase().replace(/\s/g, '')}`}
-                      className='text-black hover:text-gray-700 transition-all duration-300 font-inter relative group whitespace-nowrap'
-                    >
-                      {text}
-                      <div className='absolute inset-0 bg-white/30 rounded-lg blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300'></div>
-                    </Link>
-                  )
-                )}
+                {[
+                  { text: 'Home', id: 'hero' },
+                  { text: 'Services', id: 'services' },
+                  { text: 'Process', id: 'process' },
+                  { text: 'Industries', id: 'industries' },
+                  { text: 'About us', id: 'about' },
+                  { text: 'Vision', id: 'vision' },
+                ].map((item) => (
+                  <button
+                    key={item.text}
+                    onClick={() => scrollToSection(item.id)}
+                    className='text-black hover:text-gray-700 transition-all duration-300 font-inter relative group whitespace-nowrap bg-transparent border-none cursor-pointer'
+                  >
+                    {item.text}
+                    <div className='absolute inset-0 bg-white/30 rounded-lg blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300'></div>
+                  </button>
+                ))}
               </div>
 
               {/* Contact Button - Desktop */}
               <div className='hidden lg:block flex-shrink-0'>
-                <Link
-                  href='/contact'
+                <button
+                  onClick={() => scrollToSection('contact')}
                   className='bg-black/80 backdrop-blur-sm text-white px-6 xl:px-8 py-3 xl:py-4 rounded-full hover:bg-black/90 transition-all duration-300 font-afacad text-base xl:text-lg font-bold shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 transform hover:scale-105 whitespace-nowrap'
                 >
                   Contact us
-                </Link>
+                </button>
               </div>
 
               {/* Mobile Menu Button */}
@@ -92,25 +107,28 @@ const Navbar = () => {
         {isMenuOpen && (
           <div className='lg:hidden absolute top-full left-0 w-full bg-white backdrop-blur-sm z-40 rounded-xl shadow-xl overflow-hidden'>
             <div className='flex flex-col px-6 py-4 space-y-4'>
-              {['Home', 'Services', 'Industries', 'About us', 'Blog'].map(
-                (text) => (
-                  <Link
-                    key={text}
-                    href={`/${text.toLowerCase().replace(/\s/g, '')}`}
-                    className='text-black hover:text-gray-700 transition-all duration-300 font-inter text-lg py-2'
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {text}
-                  </Link>
-                )
-              )}
-              <Link
-                href='/contact'
+              {[
+                { text: 'Home', id: 'hero' },
+                { text: 'Services', id: 'services' },
+                { text: 'Process', id: 'process' },
+                { text: 'Industries', id: 'industries' },
+                { text: 'About us', id: 'about' },
+                { text: 'Vision', id: 'vision' },
+              ].map((item) => (
+                <button
+                  key={item.text}
+                  onClick={() => scrollToSection(item.id)}
+                  className='text-black hover:text-gray-700 transition-all duration-300 font-inter text-lg py-2 bg-transparent border-none cursor-pointer text-left'
+                >
+                  {item.text}
+                </button>
+              ))}
+              <button
+                onClick={() => scrollToSection('contact')}
                 className='bg-black/80 text-white px-6 py-3 rounded-full hover:bg-black/90 transition-all duration-300 text-center font-afacad text-lg font-bold shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 transform hover:scale-105 mt-2'
-                onClick={() => setIsMenuOpen(false)}
               >
                 Contact us
-              </Link>
+              </button>
             </div>
           </div>
         )}
