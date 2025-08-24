@@ -50,8 +50,7 @@ const HeroSection = () => {
       <div className='w-11/12 max-w-3xl mx-auto px-4 text-center z-20'>
         {/* Thin intro line: Inter 100, 42/58 at md+ */}
         <p className='text-[28px] leading-[40px] md:text-[42px] font-extralight md:leading-[58px] text-neutral-600'>
-          Will your future stand on the
-          <br className='hidden sm:block' />
+          Will your future stand on the <br className='hidden sm:block' />
           foundation of robust infrastructure
         </p>
 

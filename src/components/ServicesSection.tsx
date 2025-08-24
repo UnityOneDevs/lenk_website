@@ -55,6 +55,7 @@ export default function ServicesSection() {
   const [viewport, setViewport] = useState<'mobile' | 'tablet' | 'desktop'>(
     'desktop'
   )
+  const [isClient, setIsClient] = useState(false)
 
   // Reveal animation trigger
   useEffect(() => {
@@ -64,6 +65,7 @@ export default function ServicesSection() {
 
   // Track viewport (SSR-safe: runs only in client)
   useEffect(() => {
+    setIsClient(true)
     const onResize = () => {
       const w = window.innerWidth
       setViewport(w < 768 ? 'mobile' : w < 1024 ? 'tablet' : 'desktop')
@@ -73,14 +75,17 @@ export default function ServicesSection() {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  const cardsPerView = viewport === 'mobile' ? 1 : viewport === 'tablet' ? 2 : 4
+  // Use default viewport until client-side hydration is complete
+  const effectiveViewport = isClient ? viewport : 'desktop'
+  const cardsPerView =
+    effectiveViewport === 'mobile' ? 1 : effectiveViewport === 'tablet' ? 2 : 4
   const maxIndex = Math.max(0, services.length - cardsPerView)
   const stepPercent = 100 / cardsPerView // shift by one card
 
   // Clamp index if viewport changes
   useEffect(() => {
     if (currentIndex > maxIndex) setCurrentIndex(maxIndex)
-  }, [maxIndex])
+  }, [maxIndex, currentIndex])
 
   const next = () => setCurrentIndex((i) => (i + 1) % (maxIndex + 1))
   const prev = () =>
@@ -90,26 +95,75 @@ export default function ServicesSection() {
 
   return (
     <section className='relative w-full bg-neutral-50 py-20 px-4 overflow-hidden antialiased'>
-      <div className='max-w-7xl mx-auto'>
+      {/* Elegant animated background effect */}
+      <div
+        aria-hidden
+        className='pointer-events-none absolute inset-0 overflow-hidden'
+      >
+        {/* Floating geometric shapes */}
+        <div
+          className='absolute right-[15%] top-[20%] w-32 h-32 border border-neutral-200/30 rounded-full blur-sm'
+          style={{
+            animation: 'floatShape 15s ease-in-out infinite',
+          }}
+        />
+        <div
+          className='absolute left-[10%] top-[60%] w-24 h-24 border border-neutral-200/20 rotate-45 blur-sm'
+          style={{
+            animation: 'floatShape 12s ease-in-out infinite reverse',
+          }}
+        />
+        <div
+          className='absolute right-[25%] bottom-[25%] w-20 h-20 border border-neutral-200/25 rounded-full blur-sm'
+          style={{
+            animation: 'floatShape 18s ease-in-out infinite',
+          }}
+        />
+
+        {/* Subtle gradient overlay */}
+        <div className='absolute inset-0 bg-gradient-to-br from-neutral-50/80 via-neutral-50/40 to-neutral-100/60' />
+
+        {/* Floating dots pattern */}
+        <div
+          className='absolute left-[20%] top-[30%] w-2 h-2 bg-neutral-300/40 rounded-full'
+          style={{
+            animation: 'floatDot 8s ease-in-out infinite',
+          }}
+        />
+        <div
+          className='absolute right-[30%] top-[50%] w-1.5 h-1.5 bg-neutral-300/30 rounded-full'
+          style={{
+            animation: 'floatDot 10s ease-in-out infinite reverse',
+          }}
+        />
+        <div
+          className='absolute left-[40%] bottom-[40%] w-1 h-1 bg-neutral-300/50 rounded-full'
+          style={{
+            animation: 'floatDot 12s ease-in-out infinite',
+          }}
+        />
+      </div>
+
+      <div className='relative max-w-7xl mx-auto'>
         {/* Headings */}
-        <div className='text-left mb-16'>
+        <div className='text-left mb-20'>
           <div
-            className={`transition-all duration-1000 ease-out transform ${
+            className={`transition-all duration-1200 ease-out transform ${
               isVisible
                 ? 'translate-y-0 opacity-100'
                 : 'translate-y-8 opacity-0'
             }`}
           >
-            <h2 className='font-inter font-[100] lowercase text-[clamp(34px,6vw,72px)] leading-[1.15] tracking-[0.015em] text-neutral-900'>
+            <h2 className='font-inter font-[100] lowercase text-[clamp(34px,6vw,72px)] leading-[1.15] tracking-[0.015em] text-neutral-800'>
               built to design.
             </h2>
-            <h2 className='font-inter font-[100] lowercase text-[clamp(34px,6vw,72px)] leading-[1.15] tracking-[0.015em] text-neutral-900 mt-1'>
+            <h2 className='font-inter font-[100] lowercase text-[clamp(34px,6vw,72px)] leading-[1.15] tracking-[0.015em] text-neutral-800 mt-1'>
               engineered to scale.
             </h2>
           </div>
 
           <p
-            className={`max-w-4xl text-xl md:text-2xl lg:text-3xl font-bold text-black leading-relaxed transition-all duration-1000 ease-out delay-300 transform ${
+            className={`max-w-4xl text-xl md:text-2xl lg:text-3xl font-light text-neutral-600 leading-relaxed transition-all duration-1200 ease-out delay-500 transform ${
               isVisible
                 ? 'translate-y-0 opacity-100'
                 : 'translate-y-8 opacity-0'
@@ -122,14 +176,14 @@ export default function ServicesSection() {
 
         {/* Carousel */}
         <div
-          className='relative mb-12'
+          className='relative mb-16'
           role='region'
           aria-roledescription='carousel'
           aria-label='Our services'
         >
           <div className='overflow-hidden'>
             <div
-              className='flex transition-transform duration-500 ease-in-out touch-pan-x select-none'
+              className='flex transition-transform duration-700 ease-out touch-pan-x select-none'
               style={{ transform: `translateX(-${translate}%)` }}
             >
               {services.map((service, index) => (
@@ -144,23 +198,23 @@ export default function ServicesSection() {
                   } flex-shrink-0 px-2 md:px-4`}
                 >
                   <div
-                    className={`bg-white border border-neutral-200 rounded-[24px] p-4 md:p-6 lg:p-8 h-full transition-all duration-700 ease-out transform ${
+                    className={`group bg-white/90 backdrop-blur-md border border-neutral-200/40 rounded-[28px] p-6 md:p-8 lg:p-10 h-full transition-all duration-800 ease-out transform hover:bg-white/95 hover:border-neutral-300/60 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1),0_10px_20px_-5px_rgba(0,0,0,0.04)] hover:-translate-y-1 ${
                       isVisible
                         ? 'translate-y-0 opacity-100'
                         : 'translate-y-12 opacity-0'
                     }`}
                     style={{ transitionDelay: `${400 + index * 100}ms` }}
                   >
-                    <div className='flex items-start gap-3 md:gap-4'>
+                    <div className='flex items-start gap-4 md:gap-5'>
                       <span
-                        className='w-2 md:w-3 h-2 md:h-3 bg-white border border-black rounded-full mt-2 flex-shrink-0'
+                        className='w-3 md:w-4 h-3 md:h-4 bg-purple-100 border border-purple-400/30 rounded-full mt-2 flex-shrink-0 shadow-sm group-hover:shadow-md transition-all duration-300'
                         aria-hidden
                       />
-                      <div>
-                        <h3 className='text-lg md:text-xl font-extralight text-black mb-2 md:mb-3'>
+                      <div className='flex-1'>
+                        <h3 className='text-xl md:text-2xl font-extralight text-neutral-800 mb-3 md:mb-4 group-hover:text-neutral-900 transition-colors duration-300'>
                           {service.title}
                         </h3>
-                        <p className='text-sm md:text-base text-neutral-700 leading-relaxed font-extralight'>
+                        <p className='text-sm md:text-base text-neutral-600 leading-relaxed font-light group-hover:text-neutral-700 transition-colors duration-300'>
                           {service.description}
                         </p>
                       </div>
@@ -173,14 +227,14 @@ export default function ServicesSection() {
         </div>
 
         {/* Nav buttons */}
-        <div className='flex justify-center gap-4 mb-6'>
+        <div className='flex justify-center gap-6 mb-8'>
           <button
             onClick={prev}
-            className='w-10 h-10 md:w-12 md:h-12 bg-white border border-neutral-200 rounded-full flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-200 group touch-manipulation'
+            className='w-12 h-12 md:w-14 md:h-14 bg-white/90 backdrop-blur-md border border-neutral-200/50 rounded-full flex items-center justify-center shadow-[0_8px_25px_-8px_rgba(0,0,0,0.15),0_4px_10px_-2px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.25),0_8px_20px_-4px_rgba(0,0,0,0.1)] hover:bg-white/95 hover:border-purple-300/40 hover:scale-105 transition-all duration-300 group touch-manipulation'
             aria-label='Previous'
           >
             <svg
-              className='w-4 h-4 md:w-5 md:h-5 text-neutral-600 group-hover:text-black transition-colors duration-200'
+              className='w-5 h-5 md:w-6 md:h-6 text-neutral-500 group-hover:text-purple-600 transition-colors duration-300'
               fill='none'
               stroke='currentColor'
               viewBox='0 0 24 24'
@@ -188,7 +242,7 @@ export default function ServicesSection() {
               <path
                 strokeLinecap='round'
                 strokeLinejoin='round'
-                strokeWidth={2}
+                strokeWidth={1.5}
                 d='M15 19l-7-7 7-7'
               />
             </svg>
@@ -196,11 +250,11 @@ export default function ServicesSection() {
 
           <button
             onClick={next}
-            className='w-10 h-10 md:w-12 md:h-12 bg-white border border-neutral-200 rounded-full flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-200 group touch-manipulation'
+            className='w-12 h-12 md:w-14 md:h-14 bg-white/90 backdrop-blur-md border border-neutral-200/50 rounded-full flex items-center justify-center shadow-[0_8px_25px_-8px_rgba(0,0,0,0.15),0_4px_10px_-2px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.25),0_8px_20px_-4px_rgba(0,0,0,0.1)] hover:bg-white/95 hover:border-purple-300/40 hover:scale-105 transition-all duration-300 group touch-manipulation'
             aria-label='Next'
           >
             <svg
-              className='w-4 h-4 md:w-5 md:h-5 text-neutral-600 group-hover:text-black transition-colors duration-200'
+              className='w-5 h-5 md:w-6 md:h-6 text-neutral-500 group-hover:text-purple-600 transition-colors duration-300'
               fill='none'
               stroke='currentColor'
               viewBox='0 0 24 24'
@@ -208,7 +262,7 @@ export default function ServicesSection() {
               <path
                 strokeLinecap='round'
                 strokeLinejoin='round'
-                strokeWidth={2}
+                strokeWidth={1.5}
                 d='M9 5l7 7-7 7'
               />
             </svg>
@@ -216,19 +270,33 @@ export default function ServicesSection() {
         </div>
 
         {/* Position dots (one per scroll position) */}
-        <div className='flex justify-center gap-2'>
+        <div className='flex justify-center gap-3'>
           {Array.from({ length: maxIndex + 1 }).map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrentIndex(i)}
               aria-label={`Go to position ${i + 1}`}
-              className={`h-2 rounded-full transition-all duration-200 ${
-                i === currentIndex ? 'bg-neutral-400 w-6' : 'bg-neutral-200 w-2'
+              className={`h-2.5 rounded-full transition-all duration-300 hover:scale-110 ${
+                i === currentIndex
+                  ? 'bg-black w-8 shadow-sm'
+                  : 'bg-neutral-200/60 w-2 hover:bg-neutral-300/80'
               }`}
             />
           ))}
         </div>
       </div>
+
+      {/* Keyframes for floating animations */}
+      <style>{`
+        @keyframes floatShape {
+          0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+          50% { transform: translateY(-20px) rotate(180deg); opacity: 0.6; }
+        }
+        @keyframes floatDot {
+          0%, 100% { transform: translateY(0px) scale(1); opacity: 0.4; }
+          50% { transform: translateY(-15px) scale(1.2); opacity: 0.8; }
+        }
+      `}</style>
     </section>
   )
 }
@@ -239,4 +307,6 @@ Notes
 1) Headline uses Inter at weight 100. Ensure Inter 100 is loaded in your app.
 2) Paging logic: index ranges from 0..(services.length - cardsPerView). We shift by one card at a time for smooth control.
 3) If you prefer page-by-page movement, change next/prev to +/- cardsPerView and clamp to maxIndex.
+4) Added elegant floating geometric shapes and subtle gradient overlay for visual interest.
+5) Enhanced cards with backdrop-blur and improved hover effects.
 */
