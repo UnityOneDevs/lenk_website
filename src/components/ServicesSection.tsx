@@ -56,6 +56,7 @@ export default function ServicesSection() {
     'desktop'
   )
   const [isClient, setIsClient] = useState(false)
+  const [isPaused, setIsPaused] = useState(false)
 
   // Reveal animation trigger
   useEffect(() => {
@@ -75,6 +76,20 @@ export default function ServicesSection() {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
+  // Auto-scroll functionality
+  useEffect(() => {
+    if (!isPaused && isClient) {
+      const interval = setInterval(() => {
+        setCurrentIndex((prevIndex) => {
+          const maxIndex = Math.max(0, services.length - cardsPerView)
+          return (prevIndex + 1) % (maxIndex + 1)
+        })
+      }, 4000) // Auto-scroll every 4 seconds
+
+      return () => clearInterval(interval)
+    }
+  }, [isPaused, isClient])
+
   // Use default viewport until client-side hydration is complete
   const effectiveViewport = isClient ? viewport : 'desktop'
   const cardsPerView =
@@ -87,9 +102,19 @@ export default function ServicesSection() {
     if (currentIndex > maxIndex) setCurrentIndex(maxIndex)
   }, [maxIndex, currentIndex])
 
-  const next = () => setCurrentIndex((i) => (i + 1) % (maxIndex + 1))
-  const prev = () =>
+  const next = () => {
+    setIsPaused(true)
+    setCurrentIndex((i) => (i + 1) % (maxIndex + 1))
+    // Resume auto-scroll after 3 seconds of manual navigation
+    setTimeout(() => setIsPaused(false), 3000)
+  }
+
+  const prev = () => {
+    setIsPaused(true)
     setCurrentIndex((i) => (i - 1 + (maxIndex + 1)) % (maxIndex + 1))
+    // Resume auto-scroll after 3 seconds of manual navigation
+    setTimeout(() => setIsPaused(false), 3000)
+  }
 
   const translate = currentIndex * stepPercent
 
@@ -180,6 +205,10 @@ export default function ServicesSection() {
           role='region'
           aria-roledescription='carousel'
           aria-label='Our services'
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onTouchStart={() => setIsPaused(true)}
+          onTouchEnd={() => setIsPaused(false)}
         >
           <div className='overflow-hidden'>
             <div
@@ -274,7 +303,12 @@ export default function ServicesSection() {
           {Array.from({ length: maxIndex + 1 }).map((_, i) => (
             <button
               key={i}
-              onClick={() => setCurrentIndex(i)}
+              onClick={() => {
+                setIsPaused(true)
+                setCurrentIndex(i)
+                // Resume auto-scroll after 3 seconds of manual navigation
+                setTimeout(() => setIsPaused(false), 3000)
+              }}
               aria-label={`Go to position ${i + 1}`}
               className={`h-2.5 rounded-full transition-all duration-300 hover:scale-110 ${
                 i === currentIndex
