@@ -4,31 +4,13 @@ import React, { useState, useEffect } from 'react'
 const HeroSection = () => {
   const [currentTextIndex, setCurrentTextIndex] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
-  const [isInitialLoad, setIsInitialLoad] = useState(true)
-  const [isSupportingTextVisible, setIsSupportingTextVisible] = useState(false)
 
   const tickerTexts = [
     "you don't control?",
-    // "that doesn't let you leave?",
+    "that doesn't let you leave?",
     "that doesn't let you leave?",
     "your team doesn't understand?",
   ]
-
-  useEffect(() => {
-    // Initial animation on page load
-    if (isInitialLoad) {
-      setIsInitialLoad(false)
-      // Start with first text sliding in from bottom
-      setTimeout(() => {
-        setIsAnimating(false)
-      }, 100)
-
-      // Animate supporting text after ticker text
-      setTimeout(() => {
-        setIsSupportingTextVisible(true)
-      }, 800) // Delay after ticker animation
-    }
-  }, [isInitialLoad])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -45,7 +27,7 @@ const HeroSection = () => {
   }, [])
 
   return (
-    <section className='relative w-screen min-h-screen md:min-h-svh grid place-items-center overflow-hidden bg-white '>
+    <section className='relative w-screen min-h-screen md:min-h-svh grid place-items-center overflow-hidden bg-white'>
       {/* Decorative 3D shapes */}
       <Image
         src='/left-glass.png' // put your left asset in /public
@@ -74,12 +56,10 @@ const HeroSection = () => {
         </p>
 
         {/* Animated ticker headline */}
-        <div className='mt-4 h-[10rem] md:h-[8rem] relative overflow-hidden'>
+        <div className='mt-4 h-[6rem] md:h-[8rem] relative overflow-hidden'>
           <h1
             className={`absolute inset-0 text-4xl md:text-6xl font-extrabold tracking-tight text-black transition-all duration-500 ease-in-out flex items-center justify-center ${
               isAnimating
-                ? 'transform translate-y-full opacity-0'
-                : isInitialLoad
                 ? 'transform translate-y-full opacity-0'
                 : 'transform translate-y-0 opacity-100'
             }`}
@@ -89,15 +69,9 @@ const HeroSection = () => {
         </div>
 
         {/* Supporting copy */}
-        <p
-          className={`mt-4 max-w-2xl mx-auto text-base md:text-lg text-neutral-700 transition-all duration-700 ease-out ${
-            isSupportingTextVisible
-              ? 'transform translate-y-0 opacity-100'
-              : 'transform translate-y-8 opacity-0'
-          }`}
-        >
-          Half-baked tech? Not our style. We serve precision,
-          <br /> performance, and a damn good design
+        <p className='mt-4 max-w-2xl mx-auto text-base md:text-lg text-neutral-700'>
+          Half-baked tech? Not our style. We serve precision, performance, and a
+          damn good design
         </p>
 
         {/* CTA with subtle purple glow */}
@@ -105,7 +79,7 @@ const HeroSection = () => {
           <a
             href='#contact'
             className='inline-flex items-center justify-center rounded-full px-6 py-3 bg-black text-white font-semibold
-                        outline-2 outline-purple-500/40 shadow-[0_0_24px_0_rgba(168,85,247,0.35)]
+                       outline outline-2 outline-purple-500/40 shadow-[0_0_24px_0_rgba(168,85,247,0.35)]
                        hover:outline-purple-500/60 hover:shadow-[0_0_32px_0_rgba(168,85,247,0.45)]
                        transition-all'
           >
