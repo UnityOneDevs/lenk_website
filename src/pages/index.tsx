@@ -4,6 +4,7 @@ import VisionMissionTriptych from '../components/VisionMissionTriptych'
 import IndustriesSection from '../components/IndustriesSection'
 import ProcessTimeline from '../components/ProcessTimeline'
 import ServicesSection from '../components/ServicesSection'
+import ContactForm from '../components/ContactForm'
 
 export default function Home() {
   return (
@@ -29,24 +30,7 @@ export default function Home() {
         <VisionMissionTriptych />
       </div>
       <div id='contact' className='py-20'>
-        {/* Contact section placeholder - you can add your contact form here */}
-        <div className='max-w-4xl mx-auto text-center'>
-          <h2 className='text-4xl font-bold text-gray-900 mb-6'>
-            Get In Touch
-          </h2>
-          <p className='text-xl text-gray-600 mb-8'>
-            Ready to start your project? Let&apos;s discuss how we can help
-            bring your vision to life.
-          </p>
-          <div className='flex flex-col sm:flex-row gap-4 justify-center'>
-            <button className='bg-black text-white px-8 py-4 rounded-full hover:bg-gray-800 transition-all duration-300 font-semibold'>
-              Schedule a Call
-            </button>
-            <button className='border-2 border-black text-black px-8 py-4 rounded-full hover:bg-black hover:text-white transition-all duration-300 font-semibold'>
-              Send Message
-            </button>
-          </div>
-        </div>
+        <ContactForm />
       </div>
     </div>
   )
